@@ -28,6 +28,7 @@
     "libphonenumber"
   ],
   "license": "BSD-3-Clause",
+  "author": "Victor Raton <43411882+victorfernandesraton@users.noreply.github.com>",
   "dependencies": {
     "libphonenumber-js": "^1.12.0",
     "zod": "^4.0.0"
