@@ -1,0 +1,41 @@
+{
+  "name": "zod-phonenumber",
+  "version": "0.1.0",
+  "description": "Zod extension for phone number validation using libphonenumber-js",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "tsx --test test/*.test.ts"
+  },
+  "keywords": [
+    "zod",
+    "phone",
+    "phonenumber",
+    "validation",
+    "libphonenumber"
+  ],
+  "license": "BSD-3-Clause",
+  "peerDependencies": {
+    "zod": "^4.0.0"
+  },
+  "dependencies": {
+    "libphonenumber-js": "^1.12.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0",
+    "tsx": "^4.19.0",
+    "zod": "^4.0.0"
+  }
+}
