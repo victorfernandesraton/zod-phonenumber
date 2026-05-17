@@ -18,13 +18,30 @@ result.phone.number   // '+5511999988888'
 ## Install
 
 ```bash
-npm install zod-phonenumber zod libphonenumber-js
+npm install zod-phonenumber
 ```
 
 ## Usage
 
+### Import patterns
+
+**Pattern A — Re-export (recommended):**
+
 ```ts
 import { z } from 'zod-phonenumber'
+
+const phone = z.phone().country('BR').parse('+5511999988888')
+```
+
+**Pattern B — Named import:**
+
+```ts
+import { z } from 'zod'
+import { phone } from 'zod-phonenumber'
+
+const schema = z.object({
+  phone: phone().country('BR').ddd('11'),
+})
 ```
 
 ### Basic validation

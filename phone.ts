@@ -69,3 +69,5 @@ function createPhoneSchema(constraints: PhoneConstraints) {
 export function phone(country?: string) {
   return createPhoneSchema({ defaultCountry: country })
 }
+
+export type PhoneSchema = ReturnType<typeof phone>

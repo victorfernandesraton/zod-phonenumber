@@ -9,4 +9,4 @@ const z: typeof zod & { phone: typeof phone } = {
 export { z }
 export default z
 export { phone } from './phone.js'
-export type { PhoneConstraints } from './phone.js'
+export type { PhoneConstraints, PhoneSchema } from './phone.js'
