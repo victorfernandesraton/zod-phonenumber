@@ -1,7 +1,7 @@
 import { z } from '../index.js'
 import { test } from 'node:test'
 import { strictEqual, ok } from 'node:assert'
-import parsePhoneNumber from 'libphonenumber-js'
+import{ PhoneNumber} from 'libphonenumber-js'
 
 test('z.phone() basic validation', async (t) => {
   let schema: ReturnType<typeof z.phone>
@@ -179,7 +179,7 @@ test('z.phone() with z.object()', async (t) => {
     strictEqual(result.success, true)
     if (result.success) {
       strictEqual(result.data.name, 'João')
-      ok(result.data.phone instanceof parsePhoneNumber('+5511999988888')!.constructor)
+      ok(result.data.phone instanceof PhoneNumber)
     }
   })
 

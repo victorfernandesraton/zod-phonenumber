@@ -19,12 +19,9 @@
     "esModuleInterop": true
   },
   "include": [
-    "index.ts",
-    "phone.ts",
-    "types.ts"
+    "**/*.ts"
   ],
   "exclude": [
-    "test",
     "dist",
     "node_modules"
   ]
