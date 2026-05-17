@@ -16,9 +16,11 @@
     "dist"
   ],
   "scripts": {
+    "prebuild": "rm -rf dist",
     "build": "tsc --project tsconfig.build.json",
     "test": "tsx --test test/*.test.ts",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "prepublishOnly": "npm run lint && npm test && npm run build"
   },
   "keywords": [
     "zod",
@@ -29,6 +31,13 @@
   ],
   "license": "BSD-3-Clause",
   "author": "Victor Raton <43411882+victorfernandesraton@users.noreply.github.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/victorfernandesraton/zod-phonenumber.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "libphonenumber-js": "^1.12.0",
     "zod": "^4.0.0"
