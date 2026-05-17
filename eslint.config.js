@@ -30,7 +30,7 @@ export default tseslint.config(
         },
       ],
       '@typescript-eslint/no-require-imports': 'error',
-      'no-console': 'warn',
+      'no-console': 'error',
       'no-debugger': 'error',
       'prefer-const': 'error',
     },
