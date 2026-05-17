@@ -1,4 +1,4 @@
-# Project zod-phonenumber
+# Project @victorfernandesraton/zod-phonenumber
 
 ## General definition and goal
 
@@ -26,7 +26,7 @@ Library to provide phone number validation for [zod](https://zod.dev) schemas us
 ### Directory Structure
 
 ```
-zod-phonenumber/
+@victorfernandesraton/zod-phonenumber/
 ├── package.json          # Package definition, scripts, dependencies
 ├── tsconfig.json         # TypeScript configuration (strict mode)
 ├── .gitignore            # Ignored files (dist/, node_modules/)
@@ -40,13 +40,13 @@ zod-phonenumber/
 
 ### Import Patterns
 
-Due to ESM module namespace objects being **sealed** (non-extensible per ECMAScript spec), the traditional monkey-patch approach (`import { z } from 'zod' + import 'zod-phonenumber'`) does **not** work. The `z` object from zod v4 is a module namespace (`import * as z`) and `Object.isSealed(z)` returns `true`.
+Due to ESM module namespace objects being **sealed** (non-extensible per ECMAScript spec), the traditional monkey-patch approach (`import { z } from 'zod' + import '@victorfernandesraton/zod-phonenumber'`) does **not** work. The `z` object from zod v4 is a module namespace (`import * as z`) and `Object.isSealed(z)` returns `true`.
 
 Two supported import patterns:
 
 **Pattern A — Re-export (recommended, fully type-safe):**
 ```ts
-import { z } from 'zod-phonenumber'
+import { z } from '@victorfernandesraton/zod-phonenumber'
 
 const phone = z.phone().country('BR').parse('+5511999988888')
 ```
@@ -54,7 +54,7 @@ const phone = z.phone().country('BR').parse('+5511999988888')
 **Pattern B — Named import (use phone as standalone function):**
 ```ts
 import { z } from 'zod'
-import { phone } from 'zod-phonenumber'
+import { phone } from '@victorfernandesraton/zod-phonenumber'
 
 const schema = z.object({
   phone: phone().country('BR'),
@@ -66,7 +66,7 @@ const schema = z.object({
 ```
 ┌──────────────────────────┐
 │  User imports { z } from │
-│  'zod-phonenumber'       │
+│  '@victorfernandesraton/zod-phonenumber'       │
 └────────┬─────────────────┘
          │
          ▼
@@ -133,7 +133,7 @@ npx tsc --noEmit
 Creates a phone number schema. Accepts optional default country code.
 
 ```typescript
-import { z } from 'zod-phonenumber'
+import { z } from '@victorfernandesraton/zod-phonenumber'
 
 // Basic: validates any international phone number → returns PhoneNumber
 const phone = z.phone().parse('+12133734253')
@@ -220,7 +220,7 @@ The schema transforms the input string into a `PhoneNumber` object from `libphon
 Tests use `node:test` with TAP output format and `node:assert` for assertions:
 
 ```
-zod-phonenumber/
+@victorfernandesraton/zod-phonenumber/
 └── test/
     ├── phone.test.ts     # 43 tests in 10 suites
     └── override.test.ts  # 8 tests in 2 suites
@@ -273,7 +273,7 @@ The DDD (Discagem Direta a Distancia) is a 2-digit area code system specific to 
 ## Notes for AI Agents
 
 1. **This is a zod v4 extension** — v4 uses structural types, not class-based ZodType hierarchy like v3
-2. **The re-export pattern** (`import { z } from 'zod-phonenumber'`) is used instead of monkey-patching because ESM module imports are immutable
+2. **The re-export pattern** (`import { z } from '@victorfernandesraton/zod-phonenumber'`) is used instead of monkey-patching because ESM module imports are immutable
 3. **`libphonenumber-js` default import** (`import parsePhoneNumber from 'libphonenumber-js'`) returns `undefined` on invalid input. The named `parsePhoneNumber` export is deprecated and throws `ParseError`
 4. **Tests run via `tsx --test`** — TypeScript is executed directly, no pre-compilation needed for testing
 5. **Strict TypeScript**: All `as` assertions must be explicit intersection types, never `any` or `@ts-ignore`

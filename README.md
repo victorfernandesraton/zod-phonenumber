@@ -1,9 +1,26 @@
-# zod-phonenumber
+# @victorfernandesraton/zod-phonenumber
+
+[![npm](https://img.shields.io/npm/v/@victorfernandesraton/zod-phonenumber)](https://www.npmjs.com/package/@victorfernandesraton/zod-phonenumber)
+[![CI](https://github.com/victorfernandesraton/zod-phonenumber/actions/workflows/ci.yml/badge.svg)](https://github.com/victorfernandesraton/zod-phonenumber/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-BSD--3--Clause-blue)](https://github.com/victorfernandesraton/zod-phonenumber/blob/main/LICENSE)
 
 [Zod](https://zod.dev) extension for phone number validation using [libphonenumber-js](https://www.npmjs.com/package/libphonenumber-js).
 
+### Why this library?
+
+Most phone validation libraries treat phone numbers as plain strings — you validate them, maybe format them, and move on. They don't leverage zod's composable, chainable API.
+
+`z.phone()` is **native to zod's ecosystem**. You chain constraints directly on the schema — `.country()`, `.ddi()`, `.ddd()` — the same way you chain `.min()`, `.max()`, `.email()` on `z.string()`. And because it uses zod's `refine` + `transform`, the output is a fully typed `PhoneNumber` object from `libphonenumber-js`, ready to use.
+
+- **Chainable zod schema** — `.country('BR').ddd('11')` feels like zod, not a wrapper
+- **Returns `PhoneNumber`** — not a boolean, not a reformatted string. Full object with `.country`, `.nationalNumber`, `.formatInternational()`, etc.
+- **DDD support** — Brazilian area code filtering, auto-sets country to `BR`
+- **More chainables coming** — `.type()`, national-only validation, and other constraints planned
+- **Strict TypeScript** — zero `any`, zero `@ts-ignore`, fully type-safe
+- **Zero config** — `npm install @victorfernandesraton/zod-phonenumber` installs everything
+
 ```ts
-import { z } from 'zod-phonenumber'
+import { z } from '@victorfernandesraton/zod-phonenumber'
 
 const schema = z.object({
   name: z.string(),
@@ -18,7 +35,7 @@ result.phone.number   // '+5511999988888'
 ## Install
 
 ```bash
-npm install zod-phonenumber
+npm install @victorfernandesraton/zod-phonenumber
 ```
 
 ## Usage
@@ -28,7 +45,7 @@ npm install zod-phonenumber
 **Pattern A — Re-export (recommended):**
 
 ```ts
-import { z } from 'zod-phonenumber'
+import { z } from '@victorfernandesraton/zod-phonenumber'
 
 const phone = z.phone().country('BR').parse('+5511999988888')
 ```
@@ -37,7 +54,7 @@ const phone = z.phone().country('BR').parse('+5511999988888')
 
 ```ts
 import { z } from 'zod'
-import { phone } from 'zod-phonenumber'
+import { phone } from '@victorfernandesraton/zod-phonenumber'
 
 const schema = z.object({
   phone: phone().country('BR').ddd('11'),

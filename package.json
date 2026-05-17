@@ -1,6 +1,6 @@
 {
   "name": "@victorfernandesraton/zod-phonenumber",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Zod extension for phone number validation using libphonenumber-js",
   "type": "module",
   "main": "./dist/index.js",
