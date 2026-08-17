@@ -1,6 +1,6 @@
 import { z } from '../index.js'
 import { test } from 'node:test'
-import { strictEqual, ok } from 'node:assert'
+import { strictEqual, ok, throws } from 'node:assert'
 import{ PhoneNumber} from 'libphonenumber-js'
 
 test('z.phone() basic validation', async (t) => {
@@ -253,5 +253,61 @@ test('z.phone() edge cases', async (t) => {
   await t.test('should reject non-string input gracefully', () => {
     const result = z.phone().safeParse(123 as unknown as string)
     strictEqual(result.success, false)
+  })
+})
+
+test('z.phone() timezone support', async (t) => {
+  await t.test('uses timezone country to parse national numbers', () => {
+    const result = z.phone('America/Bahia').safeParse('71999927837')
+    strictEqual(result.success, true)
+    if (result.success) {
+      strictEqual(result.data.country, 'BR')
+      strictEqual(result.data.countryCallingCode, '55')
+      strictEqual(result.data.number, '+5571999927837')
+    }
+  })
+
+  await t.test('supports the chainable timezone method', () => {
+    const result = z.phone().timezone('America/Bahia').safeParse('71999927837')
+    strictEqual(result.success, true)
+    if (result.success) strictEqual(result.data.number, '+5571999927837')
+  })
+
+  await t.test('rejects a different country', () => {
+    strictEqual(z.phone('America/Bahia').safeParse('+12133734253').success, false)
+  })
+
+  await t.test('rejects invalid and technical timezones', () => {
+    throws(() => z.phone('Invalid/Timezone'))
+    throws(() => z.phone('Etc/UTC'))
+  })
+
+  await t.test('combines timezone and compatible Brazilian DDD', () => {
+    const result = z.phone()
+      .timezone('America/Bahia')
+      .ddd('71')
+      .safeParse('71999927837')
+
+    strictEqual(result.success, true)
+    if (result.success) {
+      strictEqual(result.data.country, 'BR')
+      strictEqual(result.data.number, '+5571999927837')
+    }
+  })
+
+  await t.test('rejects a DDD incompatible with the phone number', () => {
+    const result = z.phone()
+      .timezone('America/Bahia')
+      .ddd('11')
+      .safeParse('71999927837')
+
+    strictEqual(result.success, false)
+  })
+
+  await t.test('timezone alone does not restrict the DDD', () => {
+    const result = z.phone('America/Bahia').safeParse('11999988888')
+
+    strictEqual(result.success, true)
+    if (result.success) strictEqual(result.data.country, 'BR')
   })
 })
