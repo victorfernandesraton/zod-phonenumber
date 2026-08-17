@@ -281,4 +281,33 @@ test('z.phone() timezone support', async (t) => {
     throws(() => z.phone('Invalid/Timezone'))
     throws(() => z.phone('Etc/UTC'))
   })
+
+  await t.test('combines timezone and compatible Brazilian DDD', () => {
+    const result = z.phone()
+      .timezone('America/Bahia')
+      .ddd('71')
+      .safeParse('71999927837')
+
+    strictEqual(result.success, true)
+    if (result.success) {
+      strictEqual(result.data.country, 'BR')
+      strictEqual(result.data.number, '+5571999927837')
+    }
+  })
+
+  await t.test('rejects a DDD incompatible with the phone number', () => {
+    const result = z.phone()
+      .timezone('America/Bahia')
+      .ddd('11')
+      .safeParse('71999927837')
+
+    strictEqual(result.success, false)
+  })
+
+  await t.test('timezone alone does not restrict the DDD', () => {
+    const result = z.phone('America/Bahia').safeParse('11999988888')
+
+    strictEqual(result.success, true)
+    if (result.success) strictEqual(result.data.country, 'BR')
+  })
 })

@@ -21,8 +21,9 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tsc --project tsconfig.build.json",
-    "generate:timezones": "node scripts/generate-timezone-regions.js",
-    "test": "tsx --test test/*.test.ts",
+    "generate:timezones": "node --import tsx scripts/generate-timezone-regions.ts",
+    "test": "node --import tsx --test --experimental-test-coverage test/*.test.ts",
+    "test:all": "node --import tsx --experimental-test-coverage --test test/*.test.ts",
     "lint": "eslint ."
   },
   "keywords": [
