@@ -1,3 +1,46 @@
+export interface TimezoneEntry {
+  name: string
+  group: readonly string[]
+  countryCode: string
+}
+
+export function buildTimezoneRegions(
+  timezones: readonly TimezoneEntry[],
+  canonicalNames: ReadonlySet<string>,
+): Record<string, string> {
+  const regions: Record<string, string> = {}
+
+  for (const tz of timezones) {
+    if (tz.countryCode && !tz.name.startsWith('Etc/')) {
+      regions[tz.name] = tz.countryCode
+    }
+  }
+
+  const groupCountries = new Map<string, Set<string>>()
+  for (const tz of timezones) {
+    for (const member of tz.group) {
+      if (!canonicalNames.has(member) || regions[member] || member.startsWith('Etc/')) continue
+
+      let countries = groupCountries.get(member)
+      if (!countries) {
+        countries = new Set()
+        groupCountries.set(member, countries)
+      }
+      countries.add(tz.countryCode)
+    }
+  }
+
+  for (const [member, countries] of groupCountries) {
+    if (countries.size !== 1) continue
+    for (const country of countries) {
+      regions[member] = country
+      break
+    }
+  }
+
+  return regions
+}
+
 export function renderTimezoneModule(
   regions: Record<string, string>,
   source = '@vvo/tzdb',
