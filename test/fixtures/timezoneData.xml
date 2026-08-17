@@ -1,0 +1,9 @@
+<supplementalData>
+  <timezoneData>
+    <zoneItem type="America/Bahia" territory="BR"/>
+    <zoneItem type="America/New_York" territory="US"/>
+    <zoneItem type="Etc/UTC" territory="001"/>
+    <zoneItem type="Some/Ambiguous" territory="US"/>
+    <zoneItem type="Some/Ambiguous" territory="CA"/>
+  </timezoneData>
+</supplementalData>

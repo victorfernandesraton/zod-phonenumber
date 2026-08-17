@@ -1,6 +1,6 @@
 {
   "name": "@victorfernandesraton/zod-phonenumber",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Zod extension for phone number validation using libphonenumber-js",
   "type": "module",
   "main": "./dist/index.js",
@@ -21,6 +21,7 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "tsc --project tsconfig.build.json",
+    "generate:timezones": "node scripts/generate-timezone-regions.js",
     "test": "tsx --test test/*.test.ts",
     "lint": "eslint ."
   },
@@ -47,6 +48,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^25.8.0",
+    "@vvo/tzdb": "^6.198.0",
     "eslint": "^10.4.0",
     "tsx": "^4.19.0",
     "typescript": "^6.0.3",

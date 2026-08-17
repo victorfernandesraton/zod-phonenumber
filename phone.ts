@@ -1,22 +1,40 @@
 import { z } from 'zod'
 import parsePhoneNumber from 'libphonenumber-js'
 import type { PhoneNumber, CountryCode } from 'libphonenumber-js'
+import { timezoneRegions } from './timezone-regions.generated.js'
 
 export interface PhoneConstraints {
   defaultCountry?: string | undefined
   ddi?: string | undefined
   ddd?: string | undefined
+  timezone?: string | undefined
+}
+
+function resolveTimezone(timezone: string): CountryCode {
+  try {
+    new Intl.DateTimeFormat('en', { timeZone: timezone })
+  } catch {
+    throw new Error(`Invalid IANA timezone: ${timezone}`)
+  }
+
+  const region = timezoneRegions[timezone as keyof typeof timezoneRegions]
+  if (!region || timezone.startsWith('Etc/')) {
+    throw new Error(`Timezone does not identify a phone country: ${timezone}`)
+  }
+
+  return region as CountryCode
 }
 
 function buildSchema(constraints: PhoneConstraints) {
-  const { defaultCountry, ddi, ddd } = constraints
+  const { defaultCountry, ddi, ddd, timezone } = constraints
+  const resolvedCountry = timezone ? resolveTimezone(timezone) : defaultCountry
 
   return z.string().refine(
     (val: string) => {
-      const phone = parsePhoneNumber(val, defaultCountry as CountryCode | undefined)
+      const phone = parsePhoneNumber(val, resolvedCountry as CountryCode | undefined)
       if (!phone || !phone.isPossible()) return false
 
-      if (defaultCountry && phone.country !== defaultCountry) return false
+      if (resolvedCountry && phone.country !== resolvedCountry) return false
 
       if (ddi) {
         const expectedCallingCode = ddi.replace(/^\+/, '')
@@ -32,7 +50,7 @@ function buildSchema(constraints: PhoneConstraints) {
     },
     { message: 'Invalid phone number' },
   ).transform((val: string): PhoneNumber => {
-    const phone = parsePhoneNumber(val, defaultCountry as CountryCode | undefined)
+    const phone = parsePhoneNumber(val, resolvedCountry as CountryCode | undefined)
     if (!phone) throw new Error('Unexpected: parse failed after refine')
     return phone
   })
@@ -45,12 +63,14 @@ function createPhoneSchema(constraints: PhoneConstraints) {
     country: (code: string) => ReturnType<typeof createPhoneSchema>
     ddi: (code: string) => ReturnType<typeof createPhoneSchema>
     ddd: (code: string) => ReturnType<typeof createPhoneSchema>
+    timezone: (zone: string) => ReturnType<typeof createPhoneSchema>
     '~standard': typeof schema['~standard']
     _zod: typeof schema['_zod']
   } = schema as typeof schema & {
     country: (code: string) => ReturnType<typeof createPhoneSchema>
     ddi: (code: string) => ReturnType<typeof createPhoneSchema>
     ddd: (code: string) => ReturnType<typeof createPhoneSchema>
+    timezone: (zone: string) => ReturnType<typeof createPhoneSchema>
   }
 
   phone.country = (code: string) => createPhoneSchema({ ...constraints, defaultCountry: code })
@@ -62,12 +82,14 @@ function createPhoneSchema(constraints: PhoneConstraints) {
     }
     return createPhoneSchema(next)
   }
+  phone.timezone = (zone: string) => createPhoneSchema({ ...constraints, timezone: zone })
 
   return phone
 }
 
-export function phone(country?: string) {
-  return createPhoneSchema({ defaultCountry: country })
+export function phone(countryOrTimezone?: string) {
+  if (countryOrTimezone?.includes('/')) return createPhoneSchema({ timezone: countryOrTimezone })
+  return createPhoneSchema({ defaultCountry: countryOrTimezone })
 }
 
 export type PhoneSchema = ReturnType<typeof phone>

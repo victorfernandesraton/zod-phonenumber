@@ -32,6 +32,8 @@ Library to provide phone number validation for [zod](https://zod.dev) schemas us
 ├── .gitignore            # Ignored files (dist/, node_modules/)
   ├── index.ts              # Entry point: re-exports zod extended with z.phone()
 ├── phone.ts              # Core implementation: ZodPhone schema builder
+├── timezone-regions.generated.ts # Generated @vvo/tzdb timezone-to-country mapping
+├── scripts/               # Timezone metadata generator
 ├── test/
 │   ├── phone.test.ts     # Main test suite (43 tests)
 │   └── override.test.ts  # Import pattern tests (8 tests)
@@ -106,6 +108,9 @@ The returned schema includes chainable methods via `Object.assign`:
 - `.country(code)` — filter by country code (e.g. `'BR'`, `'US'`)
 - `.ddi(code)` — filter by international calling code (e.g. `'+55'`, `'55'`)
 - `.ddd(code)` — filter by Brazilian area code (implicitly sets country to `'BR'` if not already set)
+- `.timezone(zone)` — infer country from an IANA timezone and parse national numbers
+
+Timezone mappings are generated from development-only `@vvo/tzdb` and committed as `timezone-regions.generated.ts`. The generated mapping is the only timezone data used at runtime; `@vvo/tzdb` is not a production dependency. Runtime validation uses `Intl.DateTimeFormat`; `UTC` and `Etc/*` are rejected. Timezones infer only country/DDI and do not validate DDD.
 
 ## Essential Commands
 
