@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import parsePhoneNumber from 'libphonenumber-js'
 import type { PhoneNumber, CountryCode } from 'libphonenumber-js'
-import { timezoneRegions } from './timezone-regions.generated.js'
+import { timezoneRegions } from './timezone-regions.generated.ts'
 
 export interface PhoneConstraints {
   defaultCountry?: string | undefined
@@ -23,6 +23,18 @@ function resolveTimezone(timezone: string): CountryCode {
   }
 
   return region as CountryCode
+}
+
+type ParsePhone = typeof parsePhoneNumber
+
+export function toPhoneNumber(
+  value: string,
+  country: CountryCode | undefined,
+  parse: ParsePhone = parsePhoneNumber,
+): PhoneNumber {
+  const phone = parse(value, country)
+  if (!phone) throw new Error('Unexpected: parse failed after refine')
+  return phone
 }
 
 function buildSchema(constraints: PhoneConstraints) {
@@ -49,11 +61,7 @@ function buildSchema(constraints: PhoneConstraints) {
       return true
     },
     { message: 'Invalid phone number' },
-  ).transform((val: string): PhoneNumber => {
-    const phone = parsePhoneNumber(val, resolvedCountry as CountryCode | undefined)
-    if (!phone) throw new Error('Unexpected: parse failed after refine')
-    return phone
-  })
+  ).transform((val: string): PhoneNumber => toPhoneNumber(val, resolvedCountry as CountryCode | undefined))
 }
 
 function createPhoneSchema(constraints: PhoneConstraints) {

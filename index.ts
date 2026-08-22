@@ -1,5 +1,5 @@
 import { z as zod } from 'zod'
-import { phone } from './phone.js'
+import { phone } from './phone.ts'
 
 const z: typeof zod & { phone: typeof phone } = {
   ...zod,
@@ -8,5 +8,5 @@ const z: typeof zod & { phone: typeof phone } = {
 
 export { z }
 export default z
-export { phone } from './phone.js'
-export type { PhoneConstraints, PhoneSchema } from './phone.js'
+export { phone } from './phone.ts'
+export type { PhoneConstraints, PhoneSchema } from './phone.ts'

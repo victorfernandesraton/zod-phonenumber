@@ -1,4 +1,5 @@
-import { z } from '../index.js'
+import { z } from '../index.ts'
+import { toPhoneNumber } from '../phone.ts'
 import { test } from 'node:test'
 import { strictEqual, ok, throws } from 'node:assert'
 import{ PhoneNumber} from 'libphonenumber-js'
@@ -309,5 +310,32 @@ test('z.phone() timezone support', async (t) => {
 
     strictEqual(result.success, true)
     if (result.success) strictEqual(result.data.country, 'BR')
+  })
+})
+
+test('toPhoneNumber transform guard', async (t) => {
+  await t.test('returns the parsed phone number', () => {
+    const phone = toPhoneNumber('+12133734253', undefined)
+    strictEqual(phone.country, 'US')
+    strictEqual(phone.number, '+12133734253')
+  })
+
+  await t.test('throws when parsing fails after refine', () => {
+    throws(
+      () => toPhoneNumber('+12133734253', undefined, () => undefined),
+      /Unexpected: parse failed after refine/,
+    )
+  })
+
+  await t.test('forwards the resolved country to the parser', () => {
+    const seen: string[] = []
+    throws(
+      () => toPhoneNumber('71999927837', 'BR', (_value, country) => {
+        if (typeof country === 'string') seen.push(country)
+        return undefined
+      }),
+      /Unexpected: parse failed after refine/,
+    )
+    strictEqual(seen[0], 'BR')
   })
 })

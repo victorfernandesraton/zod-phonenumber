@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import { deepStrictEqual, ok, strictEqual } from 'node:assert'
-import { buildTimezoneRegions, renderTimezoneModule } from '../scripts/timezone-generator.js'
+import { buildTimezoneRegions, renderTimezoneModule } from '../scripts/timezone-generator.ts'
 
 const canonical = new Set([
   'Africa/Abidjan',

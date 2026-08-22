@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import { strictEqual, ok } from 'node:assert'
 
 test('primary import pattern: import { z } from "zod-phonenumber"', async (t) => {
-  const { z } = await import('../index.js')
+  const { z } = await import('../index.ts')
 
   await t.test('z.phone() works as first-class zod schema', () => {
     const phone = z.phone().parse('+12133734253')
@@ -51,7 +51,7 @@ test('primary import pattern: import { z } from "zod-phonenumber"', async (t) =>
 
 test('named import pattern: import { phone } from "zod-phonenumber"', async (t) => {
   const { z } = await import('zod')
-  const { phone } = await import('../index.js')
+  const { phone } = await import('../index.ts')
 
   await t.test('phone() returns a usable schema', () => {
     const schema = phone('BR')
